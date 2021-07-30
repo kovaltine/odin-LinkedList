@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 # Node class stores the data and the location of the next node
 class Node
   attr_accessor :value, :next
 
   def initialize(value)
     @value = value
-    # this points to the next node
     @next = nil
   end
 end
@@ -15,7 +16,6 @@ class LinkedList
 
   def initialize(value)
     @head = Node.new(value)
-    # might have to implement this var in prepend?
     @prev_node = @head
     @size = 1
   end
@@ -40,10 +40,10 @@ class LinkedList
   # returns the last node in the list
   def tail
     current = @head
-    nex = @head.next
-    until nex.nil?
-      current = nex
-      nex = current.next
+    adjacent = @head.next
+    until adjacent.nil?
+      current = adjacent
+      adjacent = current.next
     end
     current.value
   end
@@ -51,74 +51,71 @@ class LinkedList
   # returns the node at the given index
   def at(index)
     current = @head
-    nex = @head.next
-    # how to return when you want the first item
+    adjacent = @head.next
     index.times do
-      current = nex
-      nex = current.next
+      current = adjacent
+      adjacent = current.next
     end
     current.value
   end
 
   # return the last item of the list
   def pop
-    # the second last node can no longer point to anything
-    # remove the value of the last node
-    # have a size variable i can play with
     current = @head
-    nex = @head.next
+    adjacent = @head.next
     (@size - 1).times do
-      current = nex
-      nex = current.next
+      current = adjacent
+      adjacent = current.next
     end
     current
   end
 
   def contains?(num)
     current = @head
-    nex = @head.next
-    (@size - 1).times do
+    adjacent = @head.next
+    @size.times do
       return true if current.value == num
 
-      current = nex
-      nex = current.next
+      return false if current.next.nil?
+
+      current = adjacent
+      adjacent = current.next
     end
-    false
   end
 
   # returns the index of the node containing value, or nil if not found
   def find(num)
     index = 0
     current = @head
-    nex = @head.next
+    adjacent = @head.next
     @size.times do
       return index if current.value == num
       return nil if current.next.nil?
 
-      current = nex
-      nex = current.next
+      current = adjacent
+      adjacent = current.next
       index += 1
     end
   end
 
-  # have to remove frozen string literal comment for this to work
+  # convert the list values to one string
   def to_string
-    node_string = ''
+    node_string = []
     current = @head
-    nex = @head.next
+    adjacent = @head.next
     @size.times do
-      node_string.concat(" (#{current.value}) ->")
+      node_string << " (#{current.value}) ->"
       if current.next.nil?
-        node_string.concat(' nil ')
-        return node_string
+        node_string << ' nil '
+        return node_string.join
       end
-      current = nex
-      nex = current.next
+      current = adjacent
+      adjacent = current.next
     end
   end
 end
 
-arr = [1, 2, 3, 4]
+# two different ways to build the list
 
 # adds nodes to the end of the list
 def append_list(arr)
@@ -144,6 +141,8 @@ end
 
 # displays the methods applied to the linked lists
 def display(arr)
+  puts "\n #{arr}"
+
   prepend_list = prepend_list(arr)
   append_list = append_list(arr)
 
@@ -153,8 +152,8 @@ def display(arr)
   p append_list
 
   puts "\nconvert the list values to one string"
-  p prepend_list.to_string
-  p append_list.to_string
+  puts prepend_list.to_string
+  puts append_list.to_string
 
   puts "\nindex at 1: "
   p prepend_list.at(1)
@@ -164,8 +163,8 @@ def display(arr)
   p prepend_list.pop
   p append_list.pop
 
-  puts "\ndoes prepend_list contain 2?"
-  p prepend_list.contains?(2)
+  puts "\ndoes prepend_list contain 'I'?"
+  p prepend_list.contains?('I')
   puts "\ndoes append_list contain 6?"
   p append_list.contains?(6)
 
@@ -175,4 +174,9 @@ def display(arr)
   p append_list.find(6)
 end
 
+string_arr = %w[I am a linked list]
+
+arr = [1, 2, 3, 4]
+
 display(arr)
+display(string_arr)
